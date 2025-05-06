@@ -1,4 +1,7 @@
+from http.client import responses
+
 from django.shortcuts import render
+from rest_framework.fields import empty
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -17,21 +20,24 @@ class RegisterUser(generics.CreateAPIView):
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 def loginview(request):
-    email =request.data.get('email')
-    password = request.data.get('password')
-
-    user=authenticate(username=email,password=password)
-
-    if user is not None:
-        refresh =RefreshToken.for_user(user)
-        return Response({
-            'user':str(email),
-            'refresh':str(refresh),
-            'access':str(refresh.access_token)
-        },status=200
-        )
+    if request.data.get('email')=="" or request.data.get('password')=="":
+        return Response({'Invalid':'Please fill all the required fields'},status=400)
     else:
-        return Response({'Invalid':'Check email or password'},status=400)
+        email =request.data.get('email')
+        password = request.data.get('password')
+
+        user=authenticate(username=email,password=password)
+
+        if user is not None:
+            refresh =RefreshToken.for_user(user)
+            return Response({
+                'user':str(email),
+                'refresh':str(refresh),
+                'access':str(refresh.access_token)
+            },status=200
+            )
+        else:
+            return Response({'Invalid':'Check email or password'},status=400)
 
 
 
