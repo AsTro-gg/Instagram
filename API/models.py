@@ -17,7 +17,7 @@ class User(AbstractUser):
     bio = models.TextField(null=True)
     fullname=models.CharField(max_length=100)
     birthdate = models.DateField()
-    phone_number = models.IntegerField(max_length=10,null=True)
+    phone_number = models.IntegerField(null=True)
     gender = models.CharField(max_length=20,choices=GENDER_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,13 +42,13 @@ class Friends(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user} is your friend"
+        return f"{self.user}'s friend {self.friend}"
 
 class Story(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     text = models.TextField()
     story = models.FileField(upload_to='story/')
-    tags = models.ForeignKey(User,on_delete=models.CASCADE,related_name='tagged')
+    tags = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='tagged')
     created_at =models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -57,7 +57,7 @@ class Story(models.Model):
 
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    tags = models.ForeignKey(User,on_delete=models.CASCADE,related_name='tags')
+    tags = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='tags')
     post = models.FileField(upload_to='post/')
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
