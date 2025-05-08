@@ -1,4 +1,5 @@
 from http.client import responses
+from turtledemo.sorting_animate import start_ssort
 
 from django.shortcuts import render
 from rest_framework.fields import empty
@@ -60,6 +61,23 @@ class StoryAPIview(generics.GenericAPIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+class StoryDynamicAPIview(generics.GenericAPIView):
+    queryset = Story.objects.all()
+    serializer_class = StorySerializer
+
+    def delete(self, request,*args,**kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({'Successfully Deleted'},status=status.HTTP_204_NO_CONTENT)
+
+    def put(self,request,*args,**kwargs):
+        instance = self.get_object()
+        serializers = self.get_serializer(instance,data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data,status=status.HTTP_200_OK)
+        return Response(serializers.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class PostAPIview(generics.GenericAPIView):
@@ -81,3 +99,20 @@ class PostAPIview(generics.GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PostDynamicAPIview(generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def delete(self,request,*args,**kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({'Successfully Deleted'},status=status.HTTP_204_NO_CONTENT)
+
+    def put(self,request,*args,**kwargs):
+        instance = self.get_object()
+        serializers = self.get_serializer(instance,data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data,status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)

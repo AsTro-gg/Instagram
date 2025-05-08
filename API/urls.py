@@ -8,9 +8,11 @@ urlpatterns =[
 
     #Story
     path('story/',StoryAPIview.as_view(),name='Story'),
+    path('story/<int:pk>/',StoryDynamicAPIview.as_view(),name='Storydetail'),
 
     #Post
     path('post/',PostAPIview.as_view(),name ='Post'),
+    path('post/<int:pk>/',PostDynamicAPIview.as_view(),name='Postdetail')
 
 
 ]
